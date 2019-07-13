@@ -1,25 +1,104 @@
 import sys
+import os
+import nltk
+nltk.download(['punkt', 'wordnet','stopwords'])
 
+# import libraries
+import numpy as np
+import pandas as pd
+from sqlalchemy import create_engine
+
+import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.metrics import classification_report
+import pickle
 
 def load_data(database_filepath):
-    pass
-
+    """
+    Loads data from SQL Database
+    Args:
+    database_filepath: SQL database file
+    Returns:
+    X: Features dataframe
+    Y: Target dataframe
+    category_names: Target labels 
+    """
+    engine = create_engine('sqlite:///' + database_filepath)
+    df = pd.read_sql_table('DisasterResponse', con = engine)
+    X = df['message']
+    Y = df.iloc[:,4:]
+    category_names = Y.columns
+    return X, Y, category_names
 
 def tokenize(text):
-    pass
+    """
+    Tokenizes a given text.
+    Args:
+    text: text
+    Returns:
+    array of clean tokens
+    """
+    # Normalize text
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+    
+    words = word_tokenize(text)
+    # Remove stop words
+    words = [w for w in words if w not in stopwords.words("english")]
+    
+    lemmatizer = WordNetLemmatizer()
+
+    clean_tokens = []
+    for tok in words:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+
+    return clean_tokens
 
 
 def build_model():
-    pass
-
+    """Builds classification model """
+    pipeline = Pipeline([('vect', CountVectorizer(tokenizer=tokenize)),
+                         ('tfidf', TfidfTransformer()),
+                         ('clf', MultiOutputClassifier(OneVsRestClassifier(RandomForestClassifier())))])
+    parameters  = {'vect__ngram_range': ((1, 1), (1, 2)),
+                   'tfidf__use_idf': [True, False]}
+    model = GridSearchCV(pipeline, param_grid=parameters, verbose=3, n_jobs=4)
+    return model
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
-
+    """
+    Evaluate the model
+    Args:
+    model: Trained model
+    X_test: Test features
+    Y_test: Test labels
+    category_names: labels 
+    """
+    # predict
+    Y_preds = model.predict(X_test)
+    
+    for i in range(len(category_names)):
+        print("Label:", category_names[i])
+        print(classification_report(Y_test.values[:, i], Y_preds[:, i]))
 
 def save_model(model, model_filepath):
-    pass
-
+    """
+    Saves the model to a Python pickle file    
+    Args:
+    model: Trained model
+    model_filepath: Filepath to save the model
+    """
+    if os.path.exists(model_filepath):
+        os.remove(model_filepath)
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 def main():
     if len(sys.argv) == 3:
