@@ -2,7 +2,6 @@
 
 In this project with the pre-trained messages from disaster period, we build an web application with the optimized classifier to predict in which response category the new come message is likelier to belong, in order to reducie the potential reaction time of the responding organizations.
 
-<img src='pics/index.JPG' align="middle" width="500" height="500" />
 
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
@@ -15,7 +14,9 @@ In this project with the pre-trained messages from disaster period, we build an 
 2. Run the following command in the app's directory to run your web app.
     `python run.py`
 
-3. Go to http://0.0.0.0:3001/
+3. Go to http://0.0.0.0:3001/, you can try with new message with 'Classify Message'.
+
+<img src='pics/index.JPG' align="middle" width="500" height="500" />
 
 ## Code structure
 
@@ -35,5 +36,5 @@ In this project with the pre-trained messages from disaster period, we build an 
   - `train_classifier.py` - The NLP and ML pipeline script.
 
  - `pics/` 
- 	- `main.JPG` - main demo picture file
+ 	- `index.JPG` - index demo picture file
   
