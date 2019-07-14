@@ -37,4 +37,8 @@ In this project with the pre-trained messages from disaster period, we build an 
 
  - `pics/` 
  	- `index.JPG` - index demo picture file
+    
+ - `preparation_works/` 
+ 	- `ETL Pipeline Preparation.html` - ETL preparation
+    - `ML Pipeline Preparation.html` ML preparation
   
