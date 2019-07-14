@@ -1,6 +1,6 @@
 # Disaster Response Pipeline Project
 
-In this project with the pre-trained messages from disaster period, we build an web application with the optimized classifier to predict in which response category the new come message is likelier to belong, in order to reducie the potential reaction time of the responding organizations.
+In this project with the pre-trained messages from disaster period, we build an web application with the optimized classifier to predict in which response category the new come message is more likely to belong, in order to reduce the potential reaction time of the responding organizations.
 
 
 ### Instructions:
